@@ -4,6 +4,10 @@ set -eufx
 FEATURE_SET=min
 ARCH=amd64
 
+# See apt.conf(5)
+DEBUG_OPTS=
+DEBUG_OPTS="$DEBUG_OPTS -oDebug::pkgProblemResolver=1"
+
 if [ $# -ge 1 ]; then
     FEATURE_SET="$1"
     shift
@@ -83,7 +87,7 @@ in
         dpkg --add-architecture i386
         dpkg --print-architecture
         dpkg --print-foreign-architectures
-        apt update
+        apt-get update
         ;;
     *)
         echo "unsupported architecture: $ARCH"
@@ -91,9 +95,10 @@ in
         ;;
 esac
 
-apt update
-apt -yq \
+apt-get update
+apt-get -yq \
     --no-install-suggests \
     --no-install-recommends \
+    $DEBUG_OPTS \
     $APT_EXTRA_ARGS \
     install $PACKAGES
