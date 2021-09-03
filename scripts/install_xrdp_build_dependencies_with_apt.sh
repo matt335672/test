@@ -8,10 +8,34 @@ ARCH=amd64
 DEBUG_OPTS=
 DEBUG_OPTS="$DEBUG_OPTS -oDebug::pkgProblemResolver=1"
 
+# Given a list of i386 packages, this call makes sure the amd64 variants
+# of the development libraries are not installed
+remove_64bit_packages()
+{
+    rlist=""
+    for p in $PACKAGES; do
+        # Identify packages starting with 'lib' and ending with '-dev:i386'
+        if [ "${p#lib}" != "$p" -a "${p%-dev:i386}" != "$p" ]; then
+            p64=${p%i386}amd64
+            if dpkg -s $p64 >/dev/null 2>&1 ; then
+                rlist="$rlist ${p%i386}amd64"
+            fi
+        fi
+    done
+    if [ -n "$rlist" ]; then
+        echo "** Some 64-bit development packages appear to clash with i386 packages"
+        echo "**$rlist"
+        apt-get remove $rlist || :
+    fi
+}
+
+# ----------------------------------------------------------------------------
+
 if [ $# -ge 1 ]; then
     FEATURE_SET="$1"
     shift
 fi
+
 if [ $# -ge 1 ]; then
     ARCH="$1"
     shift
@@ -88,6 +112,8 @@ in
         dpkg --print-architecture
         dpkg --print-foreign-architectures
         apt-get update
+
+        remove_64bit_packages $PACKAGES
         ;;
     *)
         echo "unsupported architecture: $ARCH"
@@ -96,11 +122,7 @@ in
 esac
 
 apt-get update
-dpkg -l libtiff-dev
-apt-cache show libtiff-dev
-apt-cache show libtiff-dev:i386
 
-#apt-get remove libtiff-dev
 apt-get -yq \
     --no-install-suggests \
     --no-install-recommends \
