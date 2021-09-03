@@ -92,7 +92,7 @@ in
 esac
 
 apt update
-apt install -yq \
+apt -yq \
     --no-install-suggests \
     --no-install-recommends \
     $APT_EXTRA_ARGS \
