@@ -96,7 +96,10 @@ in
 esac
 
 apt-get update
-apt-get remove libtiff-dev
+apt-cache show libtiff-dev
+apt-cache show libtiff-dev:i386
+
+#apt-get remove libtiff-dev
 apt-get -yq \
     --no-install-suggests \
     --no-install-recommends \
