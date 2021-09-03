@@ -12,6 +12,8 @@ DEBUG_OPTS="$DEBUG_OPTS -oDebug::pkgProblemResolver=1"
 # of the development libraries are not installed
 remove_64bit_packages()
 {
+    flags=$-
+    set +x  ;# Disable tracing for this func
     rlist=""
     for p in $PACKAGES; do
         # Identify packages starting with 'lib' and ending with '-dev:i386'
@@ -27,8 +29,12 @@ remove_64bit_packages()
         echo "**$rlist"
         apt-get remove $rlist || :
     fi
+    # Restore tracing, if enabled on entry
+    set -$flags
 }
 
+# ----------------------------------------------------------------------------
+# M A I N
 # ----------------------------------------------------------------------------
 
 if [ $# -ge 1 ]; then
