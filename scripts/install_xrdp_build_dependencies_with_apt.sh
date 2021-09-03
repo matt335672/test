@@ -96,6 +96,7 @@ in
 esac
 
 apt-get update
+dpkg -l libtiff-dev
 apt-cache show libtiff-dev
 apt-cache show libtiff-dev:i386
 
