@@ -83,7 +83,7 @@ in
         dpkg --add-architecture i386
         dpkg --print-architecture
         dpkg --print-foreign-architectures
-        apt-get update
+        apt update
         ;;
     *)
         echo "unsupported architecture: $ARCH"
@@ -91,8 +91,8 @@ in
         ;;
 esac
 
-apt-get update
-apt-get -yq \
+apt update
+apt install -yq \
     --no-install-suggests \
     --no-install-recommends \
     $APT_EXTRA_ARGS \
